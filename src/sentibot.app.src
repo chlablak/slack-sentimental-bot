@@ -11,7 +11,8 @@
   {modules, [
     sentibot_app,
     sentibot_sup,
-    sb_sentimental
+    sb_sentimental,
+    sb_database
   ]},
   {maintainers, []},
   {licenses, []},

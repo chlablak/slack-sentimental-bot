@@ -8,7 +8,8 @@
 -behaviour(gen_server).
 
 %% API
--export([ start_link/0]).
+-export([ start_link/0
+        , to_code/1]).
 
 %% gen_server callbacks
 -export([ code_change/3
@@ -25,6 +26,9 @@
 start_link() ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
+to_code(_Sentiments) ->
+  todo.
+
 %%====================================================================
 %% gen_server callbacks
 %%====================================================================
@@ -34,8 +38,8 @@ code_change(OldVsn, _State, _Extra) ->
   {error, code_change_unsupported}.
 
 handle_call({message, Msg}, _From, State) ->
-  Sentiment = find_sentiment(Msg, State),
-  {reply, Sentiment, State}.
+  Sentiments = find_sentiment(Msg, State),
+  {reply, Sentiments, State}.
 
 handle_cast(Request, State) ->
   lager:error("[~p] unexpected handle_cast: ~p", [?MODULE, Request]),

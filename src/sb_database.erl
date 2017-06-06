@@ -34,14 +34,14 @@ code_change(OldVsn, _State, _Extra) ->
   {error, code_change_unsupported}.
 
 handle_call({get, User}, _From, State) ->
-  Sentiment = get_sentiment(User, State),
-  {reply, {User, Sentiment}, State};
-handle_call({set, User, Sentiment}, _From, State) ->
-  NewState = set_sentiment(User, Sentiment, State),
+  Sentiments = get_sentiment(User, State),
+  {reply, {User, Sentiments}, State};
+handle_call({set, User, Sentiments}, _From, State) ->
+  NewState = set_sentiment(User, Sentiments, State),
   {reply, ok, NewState};
 handle_call(all, _From, State) ->
-  Sentiments = get_all(State),
-  {reply, Sentiments, State}.
+  All = get_all(State),
+  {reply, All, State}.
 
 handle_cast(Request, State) ->
   lager:error("[~p] unexpected handle_cast: ~p", [?MODULE, Request]),
@@ -65,11 +65,11 @@ terminate(_Reason, _State) ->
 init_state() ->
   maps:new().
 
-get_sentiment(_User, _State) ->
-  todo.
+get_sentiment(User, State) ->
+  maps:get(User, State, []).
 
-set_sentiment(_User, _Sentiment, _State) ->
-  todo.
+set_sentiment(User, Sentiments, State) ->
+  maps:put(User, Sentiments, State).
 
-get_all(_State) ->
-  todo.
+get_all(State) ->
+  maps:to_list(State).
