@@ -26,8 +26,9 @@
 start_link() ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
-to_code(_Sentiments) ->
-  todo.
+to_code(Sentiments) ->
+  Codes = lists:map(fun(S) -> to_code_impl(S) end, Sentiments),
+  lists:foldl(fun(A, B) -> string:concat(A, B) end, "", Codes).
 
 %%====================================================================
 %% gen_server callbacks
@@ -61,7 +62,12 @@ terminate(_Reason, _State) ->
 %%====================================================================
 
 init_state() ->
-  todo.
+  [ "happy"
+  , "sad"].
 
-find_sentiment(_Msg, _State) ->
-  todo.
+find_sentiment(Msg, State) ->
+  Words = string:tokens(Msg, " "),
+  lists:filter(fun(W) -> lists:member(W, State) end, Words).
+
+to_code_impl("happy") -> " :)";
+to_code_impl("sad") -> " :(".
