@@ -8,8 +8,11 @@
     stdlib
    ]},
   {env,[]},
-  {modules, []},
-
+  {modules, [
+    sentibot_app,
+    sentibot_sup,
+    sb_sentimental
+  ]},
   {maintainers, []},
   {licenses, []},
   {links, []}

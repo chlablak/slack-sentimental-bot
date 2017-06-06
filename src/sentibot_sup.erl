@@ -8,10 +8,10 @@
 -behaviour(supervisor).
 
 %% API
--export([start_link/0]).
+-export([ start_link/0]).
 
 %% Supervisor callbacks
--export([init/1]).
+-export([ init/1]).
 
 -define(SERVER, ?MODULE).
 
@@ -20,15 +20,24 @@
 %%====================================================================
 
 start_link() ->
-    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+  supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 %%====================================================================
 %% Supervisor callbacks
 %%====================================================================
 
-%% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+  Flags = #{strategy => one_for_one
+          , intensity => 1
+          , period => 5},
+  Sentimental = #{id => sb_sentimental
+                , start => {sb_sentimental, start_link, []}
+                , type => worker},
+  Database = #{ id => sb_database
+              , start => {sb_database, start_link, []}
+              , type => worker},
+  Specs = [Sentimental, Database],
+  {ok, {Flags, Specs}}.
 
 %%====================================================================
 %% Internal functions
