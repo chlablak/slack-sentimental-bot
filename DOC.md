@@ -6,7 +6,12 @@
 ## Supervision Tree
 Like any other OTP application, our bot is composed of _supervisors_ and _workers_ that are organized into a supervision tree:
 
-TODO
+- `sentibot_app`
+  - `sentibot_sup`
+    - `sb_sentimental`
+    - `sb_database`
+    - `sb_slacker`
+      - `sb_rtm`
 
 ## Modules
 The supervision tree is composed of those modules:
@@ -17,7 +22,8 @@ The supervision tree is composed of those modules:
 | `sentibot_sup` | supervisor | `supervisor` | Top level supervisor |
 | `sb_sentimental` | worker | `gen_server` | Sentimental analysis |
 | `sb_database` | worker | `gen_server` | Store users's sentiments |
-| TODO |  |  |  |
+| `sb_slacker` | supervisor | `supervisor` | Connect to the Slack team |
+| `sb_rtm` | worker | `gen_server` | _Real-Time Messaging_ |
 
 ## Protocol
 
