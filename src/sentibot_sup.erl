@@ -36,7 +36,13 @@ init([]) ->
   Database = #{ id => sb_database
               , start => {sb_database, start_link, []}
               , type => worker},
-  Specs = [Sentimental, Database],
+  Slacker = #{id => sb_slacker
+            , start => {sb_slacker, start_link, []}
+            , type => worker},
+  Rtm = #{id => sb_rtm
+        , start => {sb_rtm, start_link, []}
+        , type => worker},
+  Specs = [Sentimental, Database, Slacker, Rtm],
   {ok, {Flags, Specs}}.
 
 %%====================================================================

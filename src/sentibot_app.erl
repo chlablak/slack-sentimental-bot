@@ -7,6 +7,9 @@
 
 -behaviour(application).
 
+% API
+-export([]).
+
 %% Application callbacks
 -export([ start/2
         , stop/1]).
@@ -15,8 +18,15 @@
 %% API
 %%====================================================================
 
+
+
+%%====================================================================
+%% application callbacks
+%%====================================================================
+
 start(_StartType, _StartArgs) ->
-  ok = lager:start(),
+  lager:start(),
+  application:ensure_all_started(slacker),
   sentibot_sup:start_link().
 
 stop(_State) ->

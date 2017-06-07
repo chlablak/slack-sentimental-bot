@@ -12,7 +12,9 @@
     sentibot_app,
     sentibot_sup,
     sb_sentimental,
-    sb_database
+    sb_database,
+    sb_slacker,
+    sb_rtm
   ]},
   {maintainers, []},
   {licenses, []},
