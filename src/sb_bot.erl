@@ -1,9 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc user's sentiment store worker.
+%% @doc Bot logic
 %% @end
 %%%-------------------------------------------------------------------
 
--module(sb_database).
+-module(sb_bot).
 
 -behaviour(gen_server).
 
@@ -33,16 +33,21 @@ code_change(OldVsn, _State, _Extra) ->
   lager:error("[~p] unexpected code_change: ~p", [?MODULE, OldVsn]),
   {error, code_change_unsupported}.
 
-handle_call({get, User}, _From, State) ->
-  Sentiments = get_sentiment(User, State),
-  {reply, {User, Sentiments}, State};
-handle_call(all, _From, State) ->
-  All = get_all(State),
-  {reply, All, State}.
+handle_call(Request, _From, State) ->
+  lager:error("[~p] unexpected handle_call: ~p", [?MODULE, Request]),
+  {noreply, State}.
 
-handle_cast({set, User, Sentiments}, State) ->
-  NewState = set_sentiment(User, Sentiments, State),
-  {noreply, NewState}.
+handle_cast({process_message, Channel, User, Text}, State) ->
+  Sentiments = gen_server:call(sb_sentimental, {message, Text}),
+  if
+    Sentiments =/= [] ->
+      gen_server:cast(sb_database, {set, User, Sentiments}),
+      Message = lists:concat([User, " is", sb_sentimental:to_code(Sentiments)]),
+      gen_server:cast(sb_slacker, {post, Channel, Message});
+    true ->
+      ok
+  end,
+  {noreply, State}.
 
 handle_info(Info, State) ->
   lager:error("[~p] unexpected handle_info: ~p", [?MODULE, Info]),
@@ -60,13 +65,4 @@ terminate(_Reason, _State) ->
 %%====================================================================
 
 init_state() ->
-  maps:new().
-
-get_sentiment(User, State) ->
-  maps:get(User, State, []).
-
-set_sentiment(User, Sentiments, State) ->
-  maps:put(User, Sentiments, State).
-
-get_all(State) ->
-  maps:to_list(State).
+  ok.

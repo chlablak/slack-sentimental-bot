@@ -31,8 +31,17 @@ start_link() ->
 init(_Args, _ConnState) ->
   {ok, {}}.
 
-websocket_handle(Msg, _ConnState, State) ->
-  lager:info("[~p] handle: ~p", [?MODULE, Msg]),
+% only written messages are listened
+websocket_handle({text, Msg}, _ConnState, State) ->
+  Map = jsx:decode(Msg, [return_maps]),
+  case maps:find(<<"type">>, Map) of
+    {ok, <<"message">>} ->
+      gen_server:cast(sb_slacker, {message, Map});
+    _Else ->
+      ok
+  end,
+  {ok, State};
+websocket_handle(_Msg, _ConnState, State) ->
   {ok, State}.
 
 websocket_info(Msg, _ConnState, State) ->

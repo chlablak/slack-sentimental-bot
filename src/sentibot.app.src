@@ -14,7 +14,8 @@
     sb_sentimental,
     sb_database,
     sb_slacker,
-    sb_rtm
+    sb_rtm,
+    sb_bot
   ]},
   {maintainers, []},
   {licenses, []},

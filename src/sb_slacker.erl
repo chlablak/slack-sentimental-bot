@@ -41,11 +41,31 @@ code_change(OldVsn, _State, _Extra) ->
   {error, code_change_unsupported}.
 
 handle_call(get_rtm_url, _From, State) ->
-  Url = get_rtm_url(),
+  {ok, Token} = maps:find(token, State),
+  {ok, _, _, Resp} = slacker_rtm:connect(Token),
+  {_, Value} = lists:keyfind(<<"url">>, 1, Resp),
+  Url = unicode:characters_to_list(Value),
   {reply, Url, State}.
 
-handle_cast(Request, State) ->
-  lager:error("[~p] unexpected handle_cast: ~p", [?MODULE, Request]),
+handle_cast({message, Msg}, State) ->
+  lager:info("[~p] recv: ~p", [?MODULE, Msg]), % TODO remove
+  case maps:find(<<"user">>, Msg) of
+    {ok, Id} ->
+      {ok, Users} = maps:find(users, State),
+      {ok, Channel} = maps:find(<<"channel">>, Msg),
+      {ok, Text} = maps:find(<<"text">>, Msg),
+      {ok, User} = maps:find(Id, Users),
+      gen_server:cast(sb_bot, {process_message,
+                               unicode:characters_to_list(Channel),
+                               unicode:characters_to_list(User),
+                               unicode:characters_to_list(Text)});
+    error -> 
+      ok
+  end,
+  {noreply, State};
+handle_cast({post, Channel, Text}, State) ->
+  {ok, Token} = maps:find(token, State),
+  slacker_chat:post_message(Token, Channel, Text, []),
   {noreply, State}.
 
 handle_info(Info, State) ->
@@ -63,11 +83,18 @@ terminate(_Reason, _State) ->
 %% Internal functions
 %%====================================================================
 
-get_rtm_url() ->
-  Token = get_token(),
-  {ok, _, _, Resp} = slacker_rtm:connect(Token),
-  {_, Url} = lists:keyfind(<<"url">>, 1, Resp),
-  unicode:characters_to_list(Url).
-
 init_state() ->
-  todo.
+  Token = get_token(),
+  Users = init_users(Token),
+  #{token => Token, users => Users}.
+
+init_users(Token) ->
+  {ok, _, _, [_, {_, Members}, _]} = slacker_user:list(Token, []),
+  Users = lists:map(fun(Infos) ->
+      lists:filter(fun({K, _}) ->
+        (K =:= <<"id">>) or (K =:= <<"real_name">>)
+      end, Infos)
+    end, Members),
+  lists:foldl(fun([{_, Id}, {_, Name}], Acc) ->
+    maps:put(Id, unicode:characters_to_list(Name), Acc)
+  end, #{}, Users).

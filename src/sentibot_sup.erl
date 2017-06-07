@@ -42,7 +42,10 @@ init([]) ->
   Rtm = #{id => sb_rtm
         , start => {sb_rtm, start_link, []}
         , type => worker},
-  Specs = [Sentimental, Database, Slacker, Rtm],
+  Bot = #{id => sb_bot
+      , start => {sb_bot, start_link, []}
+      , type => worker},
+  Specs = [Sentimental, Database, Slacker, Rtm, Bot],
   {ok, {Flags, Specs}}.
 
 %%====================================================================
