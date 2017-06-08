@@ -37,10 +37,19 @@ The supervision tree is composed of those modules:
 | `sb_database` | `{get, User}` | `{User, [Sentiment]}` | Get a list of `Sentiment :: string()` for the user `User :: string()` |
 | `sb_database` | `{set, User, [Sentiment]}` | - | Set a list of `Sentiment :: string()` for the user `User :: string()` |
 | `sb_database` | `all` | `[{User, [Sentiment]}]` | Return a list of all users with their sentiments, in a tuple `{User :: string(), [Sentiment :: string()]}` |
-| TODO |  |  |  |
+| `sb_slacker` | `get_rtm_url` | `Url` | Return a RTM url as `string()` |
+| `sb_slacker` | `{message, Msg}` | - | A message was received as a `map()` |
+| `sb_slacker` | `{post, Channel, Text}` | - | Post a `Msg :: string()` on the channel `Channel :: string()` |
+| `sb_bot` | `{process_message, Channel, User, Text}` | - | Process the bot logic |
 
 ## Sequence diagram
-TODO
+A classic message is posted by a user:
+
+![classic message](res/classic-message.png)
+
+A user asks for the users list:
+
+![command-list](res/command-list.png)
 
 ## Dependencies
 - [slacker](https://github.com/julienXX/slacker) - Erlang Slack REST API wrapper

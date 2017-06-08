@@ -2,12 +2,21 @@
 A Slack bot for sentiment analysis, for the course MCS at HEIG-VD.
 
 ## Features
-TODO
+- Sentimental analysis
+- Change the name of the bot
+- Get a list of all users
 
 ## Getting started
-TODO
+Open your favorite terminal and typ:
+- `cd /PATH/TO/SENTIBOT/`
+- `echo '"YOUR_TOKEN".' > priv/token.txt`
+- `rebar3 auto`
+- `application:start(sentibot).`
 
-Only one command is needed to build the project: `rebar3 compile`
+You will need [rebar3](https://www.rebar3.org/v3/docs).
+
+## Live exemple
+TODO
 
 ## Documentation
 More informations about the project can be found [here](DOC.md).
@@ -15,4 +24,4 @@ More informations about the project can be found [here](DOC.md).
 ## Credits
 - Champion Patrick
 - Henocq Raphaël
-- Peretti Christophe 
+- Peretti Christophe

@@ -69,5 +69,5 @@ find_sentiment(Msg, State) ->
   Words = string:tokens(Msg, " "),
   lists:filter(fun(W) -> lists:member(W, State) end, Words).
 
-to_code_impl("happy") -> " :)";
-to_code_impl("sad") -> " :(".
+to_code_impl("happy") -> " :slightly_smiling_face:";
+to_code_impl("sad") -> " :slightly_frowning_face:".

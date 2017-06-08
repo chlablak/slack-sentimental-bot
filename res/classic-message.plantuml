@@ -1,0 +1,18 @@
+@startuml
+
+title classic message posted
+
+rtm -> slacker : get_rtm_url
+slacker --> rtm : Url
+
+-> rtm : new message
+rtm -> slacker : message
+slacker -> bot : process_message
+
+bot -> sentimental : analysis
+sentimental --> bot : Sentiments
+bot -> database : set
+bot -> slacker : post
+<- slacker : post
+
+@enduml

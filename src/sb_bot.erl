@@ -38,16 +38,21 @@ handle_call(Request, _From, State) ->
   {noreply, State}.
 
 handle_cast({process_message, Channel, User, Text}, State) ->
-  Sentiments = gen_server:call(sb_sentimental, {message, Text}),
-  if
-    Sentiments =/= [] ->
-      gen_server:cast(sb_database, {set, User, Sentiments}),
-      Message = lists:concat([User, " is", sb_sentimental:to_code(Sentiments)]),
-      gen_server:cast(sb_slacker, {post, Channel, Message});
-    true ->
-      ok
-  end,
-  {noreply, State}.
+  case parse_command(Text, State) of
+    {ok, Message, NewState} ->
+      gen_server:cast(sb_slacker, {post, Channel, Message}),
+      {noreply, NewState};
+    {ok, NewState} ->
+      {noreply, NewState};
+    none ->
+      case parse_sentiment(User, Text) of
+        {ok, Message} ->
+          gen_server:cast(sb_slacker, {post, Channel, Message}),
+          {noreply, State};
+        none ->
+          {noreply, State}
+      end
+  end.
 
 handle_info(Info, State) ->
   lager:error("[~p] unexpected handle_info: ~p", [?MODULE, Info]),
@@ -65,4 +70,35 @@ terminate(_Reason, _State) ->
 %%====================================================================
 
 init_state() ->
-  ok.
+  #{name => "sentibot"}.
+
+parse_command(Text, State) ->
+  Tokens = string:tokens(string:concat(Text, " _ _ _ _"), " :"),
+  lager:info("[~p] tokens: ~p", [?MODULE, Tokens]),
+  if Tokens =/= [] ->
+    {ok, Name} = maps:find(name, State),
+    EqualName = string:equal(Name, lists:nth(1, Tokens)),
+    if EqualName ->
+      case lists:nth(2, Tokens) of
+        "list" ->
+          All = gen_server:call(sb_database, all),
+          Messages = lists:map(fun({U, S}) ->
+            lists:concat([U, " is", sb_sentimental:to_code(S)]) end, All),
+          {ok, string:join(Messages, "\n"), State};
+        "set" ->
+          case lists:nth(3, Tokens) of
+            "name" ->
+              {ok, #{name => lists:nth(4, Tokens)}}
+          end;
+        _Else ->
+          {ok, "Commands:\n  help\n  list\n  set name NAME", State}
+      end;
+    true -> none end;
+  true -> none end.
+
+parse_sentiment(User, Text) ->
+  Sentiments = gen_server:call(sb_sentimental, {message, Text}),
+  if Sentiments =/= [] ->
+    gen_server:cast(sb_database, {set, User, Sentiments}),
+    {ok, lists:concat([User, " is", sb_sentimental:to_code(Sentiments)])};
+  true -> none end.

@@ -1,0 +1,17 @@
+@startuml
+
+title list command
+
+rtm -> slacker : get_rtm_url
+slacker --> rtm : Url
+
+-> rtm : new message
+rtm -> slacker : message
+slacker -> bot : process_message
+
+bot -> database : all
+database --> bot : List
+bot -> slacker : post
+<- slacker : post
+
+@enduml
