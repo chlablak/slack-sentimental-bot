@@ -16,7 +16,7 @@ Open your favorite terminal and typ:
 You will need [rebar3](https://www.rebar3.org/v3/docs).
 
 ## Live exemple
-TODO
+![live exemple](res/live-exemple.png)
 
 ## Documentation
 More informations about the project can be found [here](DOC.md).

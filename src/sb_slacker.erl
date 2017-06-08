@@ -48,7 +48,6 @@ handle_call(get_rtm_url, _From, State) ->
   {reply, Url, State}.
 
 handle_cast({message, Msg}, State) ->
-  lager:info("[~p] recv: ~p", [?MODULE, Msg]), % TODO remove
   case maps:find(<<"user">>, Msg) of
     {ok, Id} ->
       {ok, Users} = maps:find(users, State),
@@ -59,7 +58,7 @@ handle_cast({message, Msg}, State) ->
                                unicode:characters_to_list(Channel),
                                unicode:characters_to_list(User),
                                unicode:characters_to_list(Text)});
-    error -> 
+    error ->
       ok
   end,
   {noreply, State};
