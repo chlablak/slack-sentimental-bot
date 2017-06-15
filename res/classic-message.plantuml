@@ -1,9 +1,6 @@
 @startuml
 
-title classic message posted
-
-rtm -> slacker : get_rtm_url
-slacker --> rtm : Url
+title classic message posted (with sentiments)
 
 -> rtm : new message
 rtm -> slacker : message

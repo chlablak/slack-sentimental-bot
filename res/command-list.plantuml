@@ -1,9 +1,6 @@
 @startuml
 
-title list command
-
-rtm -> slacker : get_rtm_url
-slacker --> rtm : Url
+title ask for the users list with sentiments (command)
 
 -> rtm : new message
 rtm -> slacker : message

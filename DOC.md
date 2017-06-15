@@ -43,6 +43,10 @@ The supervision tree is composed of those modules:
 | `sb_bot` | `{process_message, Channel, User, Text}` | - | Process the bot logic |
 
 ## Sequence diagram
+Startup:
+
+![startup](res/startup.png)
+
 A classic message is posted by a user:
 
 ![classic message](res/classic-message.png)

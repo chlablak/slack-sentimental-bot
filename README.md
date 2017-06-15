@@ -15,6 +15,8 @@ Open your favorite terminal and typ:
 
 You will need [rebar3](https://www.rebar3.org/v3/docs).
 
+If you don't have a _token_ yet, please look [here](https://api.slack.com/bot-users).
+
 ## Live exemple
 ![live exemple](res/live-exemple.png)
 

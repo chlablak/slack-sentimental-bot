@@ -1,0 +1,13 @@
+@startuml
+
+title sentibot startup
+
+sup -> sentimental : start
+sup -> database : start
+sup -> slacker : start
+sup -> rtm : start
+rtm -> slacker : get_rtm_url
+slacker --> rtm : Url
+sup -> bot : start
+
+@enduml
