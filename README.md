@@ -17,6 +17,8 @@ You will need [rebar3](https://www.rebar3.org/v3/docs).
 
 If you don't have a _token_ yet, please look [here](https://api.slack.com/bot-users).
 
+And don't forget to add your bot to desired channels ;)
+
 ## Live exemple
 ![live exemple](res/live-exemple.png)
 
